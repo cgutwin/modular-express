@@ -1,0 +1,19 @@
+{
+  "name": "modular-express",
+  "description": "",
+  "author": "Chris Gutwin <24538491+cgutwin@users.noreply.github.com> (https://cgutwin.ca/)",
+  "version": "1.0.0",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/express": "^4.17.7",
+    "typescript": "^3.9.7"
+  },
+  "dependencies": {
+    "express": "^4.17.1"
+  },
+  "scripts": {
+    "package": "mkdir -p dist && yarn pack --out dist/%s-%v.tgz"
+  }
+}
