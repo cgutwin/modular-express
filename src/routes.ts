@@ -1,9 +1,10 @@
 import express, { Router } from "express"
+import { Middleware } from "./index"
 
 export interface Routes {
   name: string,
   head: string,
-  middleware?: any[]
+  middleware?: Middleware[]
   paths: {
     path: string,
     method: "GET" | "POST",
@@ -24,7 +25,7 @@ export class Route {
   constructor(route: Routes) {
     this.router = express.Router()
     this.meta = route
-    this.loadMiddleware(route.middleware)
+    if (route.middleware) this.loadMiddleware(route.middleware)
     this.create(route.paths)
   }
 
@@ -48,13 +49,9 @@ export class Route {
   }
 
   // loads head specific middleware. applies to all paths in head.
-  private loadMiddleware = (middleware: any[] | undefined): void => {
-    if (middleware) {
-      console.info(`loading middleware on route ${this.meta.head}`)
-      for (let mw of middleware) {
-        this.router.use(mw)
-      }
-      console.info(`loaded ${middleware.length} middleware on ${this.meta.head}`)
-    }
+  private loadMiddleware = (middleware: Middleware[]): void => {
+    console.info(`loading middleware on route ${this.meta.head}`)
+    for (let mw of middleware) this.router.use(mw)
+    console.info(`loaded ${middleware.length} middleware on ${this.meta.head}`)
   }
 }

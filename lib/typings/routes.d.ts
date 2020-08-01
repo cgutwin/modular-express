@@ -1,8 +1,9 @@
 import { Router } from "express";
+import { Middleware } from "./index";
 export interface Routes {
     name: string;
     head: string;
-    middleware?: any[];
+    middleware?: Middleware[];
     paths: {
         path: string;
         method: "GET" | "POST";
