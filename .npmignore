@@ -1,5 +1,5 @@
-.yarn
-src
+.yarn/
+src/
 .editorconfig
 .gitignore
 .gitattributes
