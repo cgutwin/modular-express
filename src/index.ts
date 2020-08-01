@@ -1,5 +1,8 @@
-import express, { Application } from "express"
+import express, { Application, NextFunction, Request, Response } from "express"
 import { Route, Routes } from "./routes"
+
+export type Middleware = (req: Request, res: Response, next: NextFunction) => void
+type ErrorHandler = (err: Error, req: Request, res: Response, next: NextFunction) => void
 
 // ExpressServer
 // Dynamically add routes, middleware, error handlers to create an express server.
@@ -11,24 +14,24 @@ export default class ExpressServer {
   constructor(props: {
     port: number,
     routes: Routes[],
-    middleware: any[],
-    errorHandler?: any
+    middleware?: Middleware[],
+    errorHandler?: ErrorHandler[]
   }) {
     this.server = express()
     this.port = props.port
-    this.loadMiddleware(props.middleware)
-    this.loadRoutes(props.routes)
+    if (props.middleware) this.loadMiddleware(props.middleware)
     if (props.errorHandler) this.loadMiddleware(props.errorHandler)
+    this.loadRoutes(props.routes)
   }
 
-  public listen = (): void => {
-    this.server.listen(this.port, () => {
+  public listen(): void {
+    this.server.listen(this.port, (): void => {
       console.log(`server listening on port ${this.port}`)
     })
   }
 
   // Dynamically loads the routes defined in ./routes
-  private loadRoutes = (routes: Routes[]): void => {
+  private loadRoutes(routes: Routes[]): void {
     for (let route of routes) {
       console.info(`loading route ${route.name} at ${route.head}`)
       const expressRoute = new Route(route)
@@ -38,9 +41,7 @@ export default class ExpressServer {
     console.info(`finished loading ${routes.length} routes.`)
   }
 
-  private loadMiddleware = (middleware: any[]): void => {
-    for (let mw of middleware) {
-      this.server.use(mw)
-    }
+  private loadMiddleware(middleware: Middleware[] | ErrorHandler[]): void {
+    for (let mw of middleware) this.server.use(mw)
   }
 }
